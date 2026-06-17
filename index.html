@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>TODAY'S PLAN</title>
+<style>
+:root{
+ --red:#e9363a;--blue:#075de8;--green:#28a745;--purple:#8e44ad;--orange:#ff7a18;--show:#0969da;--star:#f7b51b;--line:#e7e7e7;--cream:#fff8e8;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:#fff;color:#111}
+body{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue","Hiragino Sans","Yu Gothic",sans-serif}
+button,input,select{font:inherit}button{cursor:pointer}
+.app,.save-page{width:min(430px,100%);margin:0 auto;padding:14px 12px 32px;background:#fff}
+.top{margin:8px 0 12px}
+.header{display:flex;align-items:center;justify-content:center;gap:8px;margin:0 0 4px}
+.castle-emoji,.volcano{font-size:30px;line-height:1}
+h1{margin:0;font-size:30px;line-height:1;font-weight:950;letter-spacing:.02em;white-space:nowrap}
+.save-top{text-align:right;margin:4px 0 12px}
+.save-top button{height:38px;border:2px solid var(--blue);background:#fff;color:var(--blue);border-radius:9px;padding:0 13px;font-size:14px;font-weight:950}
+.meta{display:flex;align-items:center;gap:10px;margin:0 0 14px;font-size:15px;font-weight:850;white-space:nowrap}
+.meta input,.meta select{border:0;background:transparent;font-weight:850;font-size:15px;color:#111;outline:none;padding:0;min-width:0}
+.meta select{max-width:185px}
+.pipe{color:#888}
+.next-card{position:relative;border:2px solid var(--red);border-radius:13px;min-height:112px;padding:23px 12px 12px;margin-bottom:18px;background:#fff;overflow:hidden}
+.corner-ribbon{position:absolute;left:0;top:0;width:0;height:0;border-style:solid;border-width:55px 100px 0 0;border-color:#e9363a transparent transparent transparent;z-index:5}
+.corner-ribbon span{position:absolute;left:10px;top:-44px;color:#fff;font-weight:950;font-size:18px;letter-spacing:.03em;transform:rotate(-17deg);white-space:nowrap}
+.next-inner{display:grid;grid-template-columns:68px 1fr 92px;gap:10px;align-items:center;position:relative;z-index:2}
+.icon-stack{text-align:center;font-weight:950;line-height:1.05}
+.icon-stack svg{width:56px;height:56px;display:block;margin:0 auto 4px}
+.icon-stack .lbl{font-size:18px;color:var(--green)}
+.next-title{font-size:21px;font-weight:950;line-height:1.2}
+.next-time{font-size:22px;font-weight:950;color:var(--blue);margin-top:6px}
+.next-left{font-size:13px;font-weight:850;margin-top:6px}
+.next-castle{font-size:68px;text-align:center;line-height:1}
+.section-title{font-size:20px;font-weight:950;margin:0 0 12px}
+.type-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:16px}
+.type-btn{height:82px;border:1px solid var(--line);border-radius:11px;background:#fff;color:#111;padding:7px 2px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-weight:950;line-height:1.06}
+.type-btn svg{width:30px;height:30px;display:block;overflow:visible}
+.show-emoji{display:block;font-size:29px;line-height:1;text-align:center}
+.icon-stack .show-emoji{font-size:54px;margin:0 auto 4px}
+.row-icon .show-emoji{font-size:34px;margin:0 auto 2px}
+.legend-item .show-emoji{font-size:24px;margin:0 auto 2px}
+
+.type-btn .main{font-size:12px;white-space:nowrap;color:#111}
+.type-btn small{font-size:9.4px;line-height:1.24;font-weight:850;color:#111}
+.type-btn[data-type="DPA"]{border-color:var(--red)}
+.type-btn[data-type="PP"]{border-color:var(--green)}
+.type-btn[data-type="SP"]{border-color:var(--purple)}
+.type-btn[data-type="FOOD"]{border-color:var(--orange)}
+.type-btn[data-type="SHOW"]{border-color:var(--show)}
+.type-btn[data-type="SPECIAL"]{border-color:var(--star)}
+.type-btn.active{box-shadow:0 0 0 2px rgba(233,54,58,.15)}
+label{display:block;font-size:13px;font-weight:950;margin-bottom:8px}
+.time-row{display:grid;grid-template-columns:auto auto auto auto auto;gap:5px;align-items:center;margin-bottom:7px}
+.time-pair{display:grid;grid-template-columns:56px auto 56px;gap:3px;align-items:center}
+select,input[type=text]{height:41px;border:1px solid var(--line);border-radius:9px;background:#fff;color:#111;padding:8px 10px;width:100%;outline:none}.time-pair select{-webkit-appearance:none;appearance:none;width:56px;min-width:56px;text-align:center;padding:0;font-size:17px;font-weight:900;line-height:41px}
+.colon,.wave{font-size:20px;font-weight:950}
+.no-end{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:850;white-space:nowrap;margin:0}
+.no-end input{width:16px;height:16px;accent-color:var(--blue)}
+.field{margin-top:12px}
+.action-row{display:grid;grid-template-columns:4fr 1fr;gap:10px;margin-top:15px}
+.add,.clear,.cancel{height:43px;border-radius:9px;font-weight:950;font-size:15px}
+.add{border:0;background:var(--blue);color:#fff}
+.clear{border:2px solid var(--blue);background:#fff;color:var(--blue)}
+.cancel{display:none;width:100%;margin-top:8px;border:1px solid var(--line);background:#fff}
+.editing .cancel{display:block}
+.list-head{display:flex;align-items:center;gap:8px;margin:20px 0 9px}
+.list-head h2{font-size:20px;margin:0;flex:1;font-weight:950}
+.mini{height:31px;border:1px solid var(--line);background:#fff;border-radius:9px;font-size:12px;font-weight:850;padding:0 9px}
+.list{border-top:1px solid var(--line)}
+.row{--c:#111;position:relative;display:grid;grid-template-columns:48px 1fr auto;gap:10px;align-items:center;min-height:74px;padding:9px 0 9px 7px;border-bottom:1px solid var(--line)}
+.row:before{content:"";position:absolute;left:0;top:12px;bottom:12px;width:3px;border-radius:999px;background:var(--c)}
+.row-icon{width:40px;text-align:center}
+.row-icon svg{width:34px;height:34px;display:block;margin:0 auto;overflow:visible}
+.abbr{display:block;margin-top:2px;font-size:12px;color:#111;font-weight:950}
+.row-time{font-size:13px;font-weight:950;color:var(--c)}
+.row-title{font-size:15px;font-weight:950;margin-top:3px;line-height:1.25}
+.row-memo{font-size:12px;font-weight:750;margin-top:3px;line-height:1.3}
+.row-actions{display:flex;gap:5px;padding-right:2px}
+.row-actions button{height:30px;border:1px solid var(--line);background:#fff;border-radius:8px;padding:0 8px;font-size:12px;font-weight:850;white-space:nowrap}
+.del{color:#d00}
+.legend{background:var(--cream);border:1px solid #f3dfb5;border-radius:13px;padding:10px 9px;margin:16px 0 14px}
+.legend h3{margin:0 0 10px;text-align:center;font-size:14px;font-weight:950}
+.legend-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;text-align:center}
+.legend-item{font-size:8.4px;line-height:1.25;font-weight:850}
+.legend-item svg{width:24px;height:24px;display:block;margin:0 auto;overflow:visible}
+.legend-item b{font-size:10px;display:block;margin-bottom:2px}
+.bottom-save{width:100%;height:46px;border:0;border-radius:9px;background:var(--blue);color:#fff;font-size:17px;font-weight:950}
+.save-view{display:none;min-height:100vh;background:#fff}
+.edit-view.hidden{display:none}
+.save-view.active{display:block}
+.notice{border:1px solid #f0d08d;background:#fffaf1;border-radius:9px;padding:12px;text-align:center;font-weight:850;font-size:14px;margin-bottom:12px}
+.capture{border:1px solid var(--line);border-radius:13px;background:#fff;padding:18px 16px 22px}
+.save-brand{display:flex;align-items:center;justify-content:center;gap:8px;position:relative;margin:4px 0 17px}
+.save-brand h1{font-size:27px}
+.updated{font-size:11px;font-weight:850;color:#555;text-align:right;margin:-8px 0 8px}
+.save-meta{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:850;white-space:nowrap;margin-bottom:18px}
+.save-title{font-size:18px;font-weight:950;display:flex;align-items:center;gap:8px;border-bottom:2px solid var(--red);padding-bottom:9px;margin-bottom:6px}
+.save-plan{--c:#111;display:grid;grid-template-columns:55px 1fr;gap:12px;align-items:center;padding:15px 0;border-bottom:1px dashed #d8d8d8}
+.save-actions{display:grid;gap:9px;margin-top:12px}
+.save-actions button{height:43px;border-radius:9px;border:1px solid var(--line);background:#fff;font-weight:950}
+.download{background:var(--blue)!important;border:0!important;color:#fff}
+.note{text-align:center;color:#777;font-size:11px;font-weight:750;margin-top:7px}
+.generated-wrap{display:none;margin:0 0 12px}
+.generated-wrap.active{display:block}
+.generated-wrap img{display:block;width:100%;border:1px solid var(--line);border-radius:13px;background:#fff}
+
+@media(max-width:390px){
+  .app,.save-page{padding-left:10px;padding-right:10px}
+  h1{font-size:27px}
+  .next-inner{grid-template-columns:64px 1fr 78px}
+  .next-castle{font-size:60px}
+  .type-btn .main{font-size:11px}
+  .type-btn small{font-size:8.2px}
+  .time-row{gap:4px}
+  .time-pair{grid-template-columns:52px auto 52px;gap:2px}
+  .time-pair select{-webkit-appearance:none;appearance:none;width:52px;min-width:52px;text-align:center;padding:0;font-size:16px;font-weight:900;line-height:41px}
+  .no-end{font-size:10.5px;gap:4px}
+}
+</style>
+</head>
+<body>
+<div class="edit-view" id="editView">
+<main class="app">
+<header class="top">
+  <div class="header"><span class="castle-emoji">🏰</span><h1>TODAY'S PLAN</h1><span class="volcano">🌋</span></div>
+  <div class="save-top"><button id="topSaveBtn" type="button">📷 画像を表示</button></div>
+</header>
+
+<div class="meta">
+  <span>📅</span><input type="date" id="dateInput" value="2026-06-17">
+  <span class="pipe">｜</span>
+  <span id="parkIcon">🏰</span><select id="parkSelect">
+    <option selected>東京ディズニーランド</option>
+    <option>東京ディズニーシー</option>
+    <option>その他</option>
+  </select>
+</div>
+
+<section class="next-card" id="nextCard">
+  <div class="corner-ribbon"><span>NEXT</span></div>
+  <div id="nextBox">
+    <div class="next-inner">
+      <div class="icon-stack" style="color:#28a745"><svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="28" fill="#fff" stroke="#28a745" stroke-width="8"/><path d="M40 22v19l13 8" stroke="#28a745" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="lbl">PP</div></div>
+      <div><div class="next-title">プーさん</div><div class="next-time">14:00〜15:00</div><div class="next-left">あと1時間15分</div></div>
+      <div class="next-castle next-park-icon">🏰</div>
+    </div>
+  </div>
+</section>
+
+<section id="formArea">
+  <div class="section-title">＋ 予定を追加する</div>
+  <div class="type-grid">
+    <button class="type-btn active" type="button" data-type="DPA" style="--active:var(--red)"><svg viewBox="0 0 80 80"><rect x="10" y="20" width="60" height="40" rx="9" fill="#ef1d2d"/><rect x="18" y="28" width="44" height="24" rx="5" fill="#fff"/><circle cx="26" cy="40" r="4" fill="#ef1d2d"/><circle cx="40" cy="40" r="4" fill="#ef1d2d"/><circle cx="54" cy="40" r="4" fill="#ef1d2d"/><path d="M18 25v9M18 46v9M62 25v9M62 46v9" stroke="#ef1d2d" stroke-width="5" stroke-linecap="round"/></svg><span class="main">DPA</span><small>有料の<br>優先案内</small></button>
+    <button class="type-btn" type="button" data-type="PP" style="--active:var(--green)"><svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="28" fill="#fff" stroke="#28a745" stroke-width="8"/><path d="M40 22v19l13 8" stroke="#28a745" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="main">PP</span><small>無料の<br>優先案内</small></button>
+    <button class="type-btn" type="button" data-type="SP" style="--active:var(--purple)"><svg viewBox="0 0 80 80"><rect x="16" y="34" width="48" height="34" rx="4" fill="#8e44ad"/><path d="M12 34l8-18h40l8 18z" fill="#9b59b6"/><rect x="24" y="42" width="13" height="26" rx="2" fill="#fff"/><rect x="45" y="42" width="12" height="11" rx="2" fill="#fff"/><path d="M12 34h56" stroke="#6f2da8" stroke-width="5" stroke-linecap="round"/></svg><span class="main">SP</span><small>スタンバイ<br>パス</small></button>
+    <button class="type-btn" type="button" data-type="FOOD" style="--active:var(--orange)"><svg viewBox="0 0 80 80"><path d="M23 10v27M14 10v27M32 10v27M14 37c0 8 5 12 9 12v20" stroke="#ff7a18" stroke-width="7" stroke-linecap="round"/><path d="M54 10c10 8 11 28 1 38v21" stroke="#ff7a18" stroke-width="8" stroke-linecap="round"/></svg><span class="main">フード</span><small>レストラン予約<br>MO</small></button>
+    <button class="type-btn" type="button" data-type="SHOW" style="--active:var(--show)"><span class="show-emoji">🏰</span><span class="main">ショーパレ</span><small>ショー・<br>パレード</small></button>
+    <button class="type-btn" type="button" data-type="SPECIAL" style="--active:var(--star)"><svg viewBox="0 0 80 80"><path d="M40 7l10 22 24 3-17 17 4 24-21-12-21 12 4-24L6 32l24-3z" fill="#f7b51b" stroke="#eba400" stroke-width="2.5" stroke-linejoin="round"/></svg><span class="main">特別な体験</span><small>グリ・<br>ホテル等</small></button>
+  </div>
+
+  <label>時間</label>
+  <div class="time-row">
+    <div class="time-pair"><select id="startH"><option value="07" >07</option>
+<option value="08" >08</option>
+<option value="09" >09</option>
+<option value="10" selected>10</option>
+<option value="11" >11</option>
+<option value="12" >12</option>
+<option value="13" >13</option>
+<option value="14" >14</option>
+<option value="15" >15</option>
+<option value="16" >16</option>
+<option value="17" >17</option>
+<option value="18" >18</option>
+<option value="19" >19</option>
+<option value="20" >20</option>
+<option value="21" >21</option>
+<option value="22" >22</option>
+<option value="23" >23</option></select><span class="colon">:</span><select id="startM"><option value="00" >00</option>
+<option value="05" >05</option>
+<option value="10" >10</option>
+<option value="15" >15</option>
+<option value="20" >20</option>
+<option value="25" >25</option>
+<option value="30" selected>30</option>
+<option value="35" >35</option>
+<option value="40" >40</option>
+<option value="45" >45</option>
+<option value="50" >50</option>
+<option value="55" >55</option></select></div>
+    <span class="wave">〜</span>
+    <div class="time-pair"><select id="endH"><option value="07" >07</option>
+<option value="08" >08</option>
+<option value="09" >09</option>
+<option value="10" >10</option>
+<option value="11" >11</option>
+<option value="12" selected>12</option>
+<option value="13" >13</option>
+<option value="14" >14</option>
+<option value="15" >15</option>
+<option value="16" >16</option>
+<option value="17" >17</option>
+<option value="18" >18</option>
+<option value="19" >19</option>
+<option value="20" >20</option>
+<option value="21" >21</option>
+<option value="22" >22</option>
+<option value="23" >23</option></select><span class="colon">:</span><select id="endM"><option value="00" selected>00</option>
+<option value="05" >05</option>
+<option value="10" >10</option>
+<option value="15" >15</option>
+<option value="20" >20</option>
+<option value="25" >25</option>
+<option value="30" >30</option>
+<option value="35" >35</option>
+<option value="40" >40</option>
+<option value="45" >45</option>
+<option value="50" >50</option>
+<option value="55" >55</option></select></div>
+    <label class="no-end"><input type="checkbox" id="noEnd">終了時間なし</label>
+  </div>
+
+  <div class="field"><label>タイトル</label><input type="text" id="title" placeholder="例：プーさんのハニーハント"></div>
+  <div class="field"><label>メモ（任意）</label><input type="text" id="memo" placeholder="例：雨の場合はレインコート持参"></div>
+
+  <div class="action-row"><button class="add" id="addBtn" type="button">追加する</button><button class="clear" id="clearBtn" type="button">クリア</button></div>
+  <button class="cancel" id="cancelBtn" type="button">編集をキャンセル</button>
+</section>
+
+<section>
+  <div class="list-head"><h2>☰ 今日の予定一覧</h2><button class="mini" id="sortBtn" type="button">↕ 時間順</button><button class="mini" id="clearAllBtn" type="button">🗑 全削除</button></div>
+  <div class="list" id="planList">
+    <div class="row" style="--c:#ef1d2d"><div class="row-icon"><svg viewBox="0 0 80 80"><rect x="10" y="20" width="60" height="40" rx="9" fill="#ef1d2d"/><rect x="18" y="28" width="44" height="24" rx="5" fill="#fff"/><circle cx="26" cy="40" r="4" fill="#ef1d2d"/><circle cx="40" cy="40" r="4" fill="#ef1d2d"/><circle cx="54" cy="40" r="4" fill="#ef1d2d"/><path d="M18 25v9M18 46v9M62 25v9M62 46v9" stroke="#ef1d2d" stroke-width="5" stroke-linecap="round"/></svg><span class="abbr">DPA</span></div><div><div class="row-time">10:00〜11:00</div><div class="row-title">美女と野獣</div><div class="row-memo">城前経由で移動</div></div><div class="row-actions"><button>✎ 編集</button><button class="del">🗑 削除</button></div></div>
+    <div class="row" style="--c:#28a745"><div class="row-icon"><svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="28" fill="#fff" stroke="#28a745" stroke-width="8"/><path d="M40 22v19l13 8" stroke="#28a745" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="abbr">PP</span></div><div><div class="row-time">11:30〜12:30</div><div class="row-title">プーさんのハニーハント</div><div class="row-memo">雨の場合はレインコート持参</div></div><div class="row-actions"><button>✎ 編集</button><button class="del">🗑 削除</button></div></div>
+    <div class="row" style="--c:#ff7a18"><div class="row-icon"><svg viewBox="0 0 80 80"><path d="M23 10v27M14 10v27M32 10v27M14 37c0 8 5 12 9 12v20" stroke="#ff7a18" stroke-width="7" stroke-linecap="round"/><path d="M54 10c10 8 11 28 1 38v21" stroke="#ff7a18" stroke-width="8" stroke-linecap="round"/></svg><span class="abbr"></span></div><div><div class="row-time">13:00〜14:00</div><div class="row-title">イーストサイド・カフェ</div><div class="row-memo">モバイルオーダーで注文済み</div></div><div class="row-actions"><button>✎ 編集</button><button class="del">🗑 削除</button></div></div>
+  </div>
+</section>
+
+<section class="legend">
+  <h3>アイコンの見方</h3>
+  <div class="legend-grid">
+    <div class="legend-item"><svg viewBox="0 0 80 80"><rect x="10" y="20" width="60" height="40" rx="9" fill="#ef1d2d"/><rect x="18" y="28" width="44" height="24" rx="5" fill="#fff"/><circle cx="26" cy="40" r="4" fill="#ef1d2d"/><circle cx="40" cy="40" r="4" fill="#ef1d2d"/><circle cx="54" cy="40" r="4" fill="#ef1d2d"/><path d="M18 25v9M18 46v9M62 25v9M62 46v9" stroke="#ef1d2d" stroke-width="5" stroke-linecap="round"/></svg><b>DPA</b>有料の<br>優先案内</div>
+    <div class="legend-item"><svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="28" fill="#fff" stroke="#28a745" stroke-width="8"/><path d="M40 22v19l13 8" stroke="#28a745" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg><b>PP</b>無料の<br>優先案内</div>
+    <div class="legend-item"><svg viewBox="0 0 80 80"><rect x="16" y="34" width="48" height="34" rx="4" fill="#8e44ad"/><path d="M12 34l8-18h40l8 18z" fill="#9b59b6"/><rect x="24" y="42" width="13" height="26" rx="2" fill="#fff"/><rect x="45" y="42" width="12" height="11" rx="2" fill="#fff"/><path d="M12 34h56" stroke="#6f2da8" stroke-width="5" stroke-linecap="round"/></svg><b>SP</b>スタンバイ<br>パス</div>
+    <div class="legend-item"><svg viewBox="0 0 80 80"><path d="M23 10v27M14 10v27M32 10v27M14 37c0 8 5 12 9 12v20" stroke="#ff7a18" stroke-width="7" stroke-linecap="round"/><path d="M54 10c10 8 11 28 1 38v21" stroke="#ff7a18" stroke-width="8" stroke-linecap="round"/></svg><b>フード</b>レストラン予約<br>MO</div>
+    <div class="legend-item"><span class="show-emoji">🏰</span><b>ショーパレ</b>ショー・<br>パレード</div>
+    <div class="legend-item"><svg viewBox="0 0 80 80"><path d="M40 7l10 22 24 3-17 17 4 24-21-12-21 12 4-24L6 32l24-3z" fill="#f7b51b" stroke="#eba400" stroke-width="2.5" stroke-linejoin="round"/></svg><b>特別な体験</b>グリ・<br>ホテル等</div>
+  </div>
+</section>
+<button class="bottom-save" id="bottomSaveBtn" type="button">📷 画像を表示</button>
+</main>
+</div>
+
+<div class="save-view" id="saveView">
+<main class="save-page">
+  <div class="notice">※下の画像を長押しして保存できます</div>
+  <section class="capture" id="captureArea">
+    <div class="save-brand"><span class="castle-emoji">🏰</span><h1>TODAY'S PLAN</h1><span class="volcano">🌋</span></div><div class="updated" id="updatedAt">更新 13:25</div>
+    <div class="save-meta"><span>📅</span><span id="saveDate">2026/06/17</span><span class="pipe">｜</span><span id="saveParkIcon">🏰</span><span id="savePark">東京ディズニーランド</span></div>
+    <section class="next-card" id="saveNextCard"><div class="corner-ribbon"><span>NEXT</span></div><div id="saveNextBox"></div></section>
+    <div class="save-title">🏰 今日の予定一覧</div>
+    <div id="saveList"></div>
+  </section>
+  <div class="generated-wrap" id="generatedWrap"><img id="generatedImg" alt="保存用画像"></div>
+  <div class="save-actions"><button id="backBtn" type="button">編集画面に戻る</button></div>
+  <div class="note">下の画像を長押しして保存してください</div>
+</main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script>
+const icons={
+DPA:`<svg viewBox="0 0 80 80"><rect x="10" y="20" width="60" height="40" rx="9" fill="#ef1d2d"/><rect x="18" y="28" width="44" height="24" rx="5" fill="#fff"/><circle cx="26" cy="40" r="4" fill="#ef1d2d"/><circle cx="40" cy="40" r="4" fill="#ef1d2d"/><circle cx="54" cy="40" r="4" fill="#ef1d2d"/><path d="M18 25v9M18 46v9M62 25v9M62 46v9" stroke="#ef1d2d" stroke-width="5" stroke-linecap="round"/></svg>`,PP:`<svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="28" fill="#fff" stroke="#28a745" stroke-width="8"/><path d="M40 22v19l13 8" stroke="#28a745" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,SP:`<svg viewBox="0 0 80 80"><rect x="16" y="34" width="48" height="34" rx="4" fill="#8e44ad"/><path d="M12 34l8-18h40l8 18z" fill="#9b59b6"/><rect x="24" y="42" width="13" height="26" rx="2" fill="#fff"/><rect x="45" y="42" width="12" height="11" rx="2" fill="#fff"/><path d="M12 34h56" stroke="#6f2da8" stroke-width="5" stroke-linecap="round"/></svg>`,FOOD:`<svg viewBox="0 0 80 80"><path d="M23 10v27M14 10v27M32 10v27M14 37c0 8 5 12 9 12v20" stroke="#ff7a18" stroke-width="7" stroke-linecap="round"/><path d="M54 10c10 8 11 28 1 38v21" stroke="#ff7a18" stroke-width="8" stroke-linecap="round"/></svg>`,SHOW:`<span class="show-emoji">🏰</span>`,SPECIAL:`<svg viewBox="0 0 80 80"><path d="M40 7l10 22 24 3-17 17 4 24-21-12-21 12 4-24L6 32l24-3z" fill="#f7b51b" stroke="#eba400" stroke-width="2.5" stroke-linejoin="round"/></svg>`
+};
+const data={DPA:{c:'#ef1d2d',label:'DPA'},PP:{c:'#28a745',label:'PP'},SP:{c:'#8e44ad',label:'SP'},FOOD:{c:'#ff7a18',label:''},SHOW:{c:'#0969da',label:'ショー'},SPECIAL:{c:'#f7b51b',label:'体験'}};
+const $=id=>document.getElementById(id);
+let currentType='DPA',editId=null;
+function defaultPlans(){return[{type:'DPA',title:'美女と野獣',start:'10:00',end:'11:00',memo:'城前経由で移動',id:1},{type:'PP',title:'プーさんのハニーハント',start:'11:30',end:'12:30',memo:'雨の場合はレインコート持参',id:2},{type:'FOOD',title:'イーストサイド・カフェ',start:'13:00',end:'14:00',memo:'モバイルオーダーで注文済み',id:3},{type:'SHOW',title:'クラブマウスビート',start:'15:30',end:'16:15',memo:'抽選当選',id:4},{type:'SPECIAL',title:'ミッキーとグリーティング',start:'17:00',end:'17:20',memo:'シアターオーリンズ前',id:5}]}
+let plans=JSON.parse(localStorage.getItem('todaysPlanNochangeFinal')||'null')||defaultPlans();
+function save(){localStorage.setItem('todaysPlanNochangeFinal',JSON.stringify(plans))}
+function pad(n){return String(n).padStart(2,'0')}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function toMin(t){if(!t)return 99999;let [h,m]=t.split(':').map(Number);return h*60+m}
+function sorted(){return[...plans].sort((a,b)=>toMin(a.start)-toMin(b.start))}
+function nowMin(){let d=new Date();return d.getHours()*60+d.getMinutes()}
+function nextPlan(){let s=sorted();if(!s.length)return null;let n=nowMin();return s.find(p=>toMin(p.end||p.start)>=n)||s[0]}
+function range(p){return p.end?`${p.start}〜${p.end}`:p.start}
+function leftText(p){let d=toMin(p.start)-nowMin();if(d>0){let h=Math.floor(d/60),m=d%60;if(h&&m)return`あと${h}時間${m}分`;if(h)return`あと${h}時間`;return`あと${m}分`}if(p.end&&toMin(p.end)>=nowMin())return'利用時間中';return''}
+function bigIcon(t){return`<div class="icon-stack" style="color:${data[t].c}">${icons[t]}<div class="lbl" style="color:${data[t].c}">${data[t].label}</div></div>`}
+function listIcon(t){return`<div class="row-icon">${icons[t]}<span class="abbr">${data[t].label}</span></div>`}
+function renderNext(target='nextBox',count=true){let p=nextPlan(),el=$(target),card=target==='saveNextBox'?$('saveNextCard'):$('nextCard');if(!p)return;card.style.borderColor=data[p.type].c;el.innerHTML=`<div class="next-inner">${bigIcon(p.type)}<div><div class="next-title">${esc(p.title)}</div><div class="next-time">${range(p)}</div>${count?`<div class="next-left">${leftText(p)}</div>`:''}</div><div class="next-castle next-park-icon">${parkEmoji()}</div></div>`}
+function renderList(){let c=$('planList');c.innerHTML='';sorted().forEach(p=>{let r=document.createElement('div');r.className='row';r.style.setProperty('--c',data[p.type].c);r.innerHTML=`${listIcon(p.type)}<div><div class="row-time">${range(p)}</div><div class="row-title">${esc(p.title)}</div>${p.memo?`<div class="row-memo">${esc(p.memo)}</div>`:''}</div><div class="row-actions"><button class="edit">✎ 編集</button><button class="del">🗑 削除</button></div>`;r.querySelector('.edit').onclick=()=>startEdit(p.id);r.querySelector('.del').onclick=()=>{if(confirm('この予定を削除しますか？')){plans=plans.filter(x=>x.id!==p.id);save();renderAll()}};c.appendChild(r)})}
+function renderSaveList(){let c=$('saveList');c.innerHTML='';sorted().forEach(p=>{let r=document.createElement('div');r.className='save-plan';r.style.setProperty('--c',data[p.type].c);r.innerHTML=`<div class="row-icon">${icons[p.type]}<span class="abbr">${data[p.type].label}</span></div><div><div class="row-time">${range(p)}</div><div class="row-title">${esc(p.title)}</div>${p.memo?`<div class="row-memo">${esc(p.memo)}</div>`:''}</div>`;c.appendChild(r)})}
+function renderAll(){renderNext('nextBox',true);renderList()}
+function setType(t){currentType=t;document.querySelectorAll('.type-btn').forEach(b=>b.classList.toggle('active',b.dataset.type===t))}
+function form(){return{type:currentType,start:`${$('startH').value}:${$('startM').value}`,end:$('noEnd').checked?'':`${$('endH').value}:${$('endM').value}`,title:$('title').value.trim(),memo:$('memo').value.trim()}}
+function add(){let f=form();if(!f.title){alert('タイトルを入れてね');return}if(f.end&&toMin(f.end)<toMin(f.start)){alert('終了時間は開始時間より後にしてね');return}if(editId)plans=plans.map(p=>p.id===editId?{...p,...f}:p);else plans.push({...f,id:Date.now()});save();reset();renderAll()}
+function setTime(t,pre){let [h,m]=(t||'').split(':');if(pre==='s'){$('startH').value=h||'10';$('startM').value=m||'30'}else{$('endH').value=h||'12';$('endM').value=m||'00'}}
+function startEdit(id){let p=plans.find(x=>x.id===id);if(!p)return;editId=id;$('formArea').classList.add('editing');setType(p.type);setTime(p.start,'s');$('noEnd').checked=!p.end;$('endH').disabled=!p.end;$('endM').disabled=!p.end;if(p.end)setTime(p.end,'e');$('title').value=p.title;$('memo').value=p.memo||'';$('addBtn').textContent='保存する';$('formArea').scrollIntoView({behavior:'smooth',block:'start'})}
+function reset(){editId=null;$('formArea').classList.remove('editing');$('addBtn').textContent='追加する';$('title').value='';$('memo').value='';$('noEnd').checked=false;$('endH').disabled=false;$('endM').disabled=false}
+
+
+function parkEmoji(){
+ const park=$('parkSelect').value;
+ if(park==='東京ディズニーシー') return '🌋';
+ if(park==='その他') return '🏨';
+ return '🏰';
+}
+
+function updateParkIcon(){
+ const park=$('parkSelect').value;
+ let icon='🏰';
+ if(park==='東京ディズニーシー') icon='🌋';
+ else if(park==='その他') icon='🏨';
+ $('parkIcon').textContent=icon;
+ let sp=$('saveParkIcon');
+ if(sp) sp.textContent=icon;
+ document.querySelectorAll('.next-park-icon').forEach(e=>e.textContent=icon);
+}
+
+function slash(v){let [y,m,d]=v.split('-');return`${y}/${m}/${d}`}
+async function openSave(){
+ if(typeof html2canvas==='undefined'){
+  alert('画像保存の準備中です。少し待ってもう一度押してね。');
+  return;
+ }
+ let n=new Date();
+ $('updatedAt').textContent=`作成 ${pad(n.getHours())}:${pad(n.getMinutes())}`;
+ $('saveDate').textContent=slash($('dateInput').value);
+ $('savePark').textContent=$('parkSelect').value;
+ if(typeof updateParkIcon==='function') updateParkIcon();
+ renderNext('saveNextBox',false);
+ renderSaveList();
+
+ $('editView').classList.add('hidden');
+ $('saveView').classList.add('active');
+ $('captureArea').style.display='';
+ if($('generatedWrap')) $('generatedWrap').classList.remove('active');
+ if($('generatedImg')) $('generatedImg').removeAttribute('src');
+ scrollTo(0,0);
+
+ await new Promise(r=>setTimeout(r,350));
+ let canvas=await html2canvas($('captureArea'),{backgroundColor:'#fff',scale:2,useCORS:true});
+ if($('generatedImg')) $('generatedImg').src=canvas.toDataURL('image/png');
+ $('captureArea').style.display='none';
+ if($('generatedWrap')) $('generatedWrap').classList.add('active');
+ scrollTo(0,0);
+}
+async function download(){if(typeof html2canvas==='undefined'){alert('画像保存の準備中です。少し待ってもう一度押してね。');return}let canvas=await html2canvas($('captureArea'),{backgroundColor:'#fff',scale:2,useCORS:true});let url=canvas.toDataURL('image/png');let w=window.open('');if(w){w.document.write('<html><head><title>todays-plan</title><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;background:#fff"><img src="'+url+'" style="width:100%;display:block"></body></html>');w.document.close();}else{location.href=url;}}
+document.addEventListener('DOMContentLoaded',()=>{
+document.querySelectorAll('.type-btn').forEach(b=>b.onclick=()=>setType(b.dataset.type));
+$('addBtn').onclick=add;$('clearBtn').onclick=reset;$('cancelBtn').onclick=reset;$('sortBtn').onclick=renderAll;$('clearAllBtn').onclick=()=>{if(confirm('予定を全部削除しますか？')){plans=[];save();renderAll()}};
+$('topSaveBtn').onclick=openSave;$('bottomSaveBtn').onclick=openSave;$('backBtn').onclick=()=>{$('saveView').classList.remove('active');$('editView').classList.remove('hidden');$('captureArea').style.display='';if($('generatedWrap'))$('generatedWrap').classList.remove('active');scrollTo(0,0)};
+if($('downloadBtn'))$('downloadBtn').onclick=download;$('noEnd').onchange=()=>{$('endH').disabled=$('noEnd').checked;$('endM').disabled=$('noEnd').checked};
+$('dateInput').onchange=()=>localStorage.setItem('todayDate',$('dateInput').value);$('parkSelect').onchange=()=>{localStorage.setItem('todayPark',$('parkSelect').value);updateParkIcon();};
+let storedDate=localStorage.getItem('todayDate');if(storedDate)$('dateInput').value=storedDate;let storedPark=localStorage.getItem('todayPark');if(storedPark)$('parkSelect').value=storedPark;updateParkIcon();
+renderAll();setInterval(()=>renderNext('nextBox',true),60000);
+});
+</script>
+</body>
+</html>
